@@ -49,8 +49,7 @@
         <el-table-column align="left" label="分类名称" >
           <template #default="scope">
             <div class="flex items-center">
-              <van-icon v-if="scope.row.icon" :name="scope.row.icon" size="18" class="mr-2" />
-              <span>{{ scope.row.category_name }}</span>
+              <span>{{ scope.row.icon }}-{{ scope.row.category_name }}</span>
             </div>
           </template>
         </el-table-column>
@@ -194,9 +193,6 @@
                 autocomplete="off"
                 readonly
             >
-              <template #suffix>
-                <van-icon v-if="form.icon" :name="form.icon" size="18" />
-              </template>
             </el-input>
             <el-button
                 type="primary"
@@ -350,8 +346,6 @@ import UploadCommon from '@/components/upload/common.vue'
 import CustomPic from '@/components/customPic/index.vue'
 import IconSelector from '@/components/IconSelector/IconSelector.vue'
 import EmojiSelector from '@/components/EmojiSelector/index.vue'
-import { Icon as VanIcon } from 'vant'
-import 'vant/es/icon/style'
 import {useUserStore} from "@/pinia/index.js";
 const userStore = useUserStore()
 

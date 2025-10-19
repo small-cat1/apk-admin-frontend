@@ -58,7 +58,6 @@
         <el-table-column align="left" label="服务商信息"  fixed="left">
           <template #default="scope">
             <div class="provider-info">
-              <van-icon v-if="scope.row.icon" :name="scope.row.icon" size="40" />
               <div class="provider-details">
                 <div class="provider-name">{{ scope.row.name }}</div>
                 <div class="provider-code">代码: {{ scope.row.code }}</div>
@@ -179,9 +178,6 @@
                   autocomplete="off"
                   readonly
               >
-                <template #suffix>
-                  <van-icon v-if="form.icon" :name="form.icon" size="30" />
-                </template>
               </el-input>
               <el-button
                   type="primary"
@@ -251,9 +247,7 @@
               </el-tag>
             </el-descriptions-item>
             <el-descriptions-item label="排序">{{ viewData.sort_order }}</el-descriptions-item>
-            <el-descriptions-item label="服务商图标" :span="2">
-              <van-icon v-if="viewData.icon" :name="viewData.icon" size="60" />
-            </el-descriptions-item>
+            <el-descriptions-item label="服务商图标">{{ viewData.icon }}</el-descriptions-item>
           </el-descriptions>
         </div>
 
@@ -292,8 +286,6 @@ import IconSelector from '@/components/IconSelector/IconSelector.vue'
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { formatDate } from '@/utils/format'
-import { Icon as VanIcon } from 'vant'
-import 'vant/es/icon/style'
 defineOptions({
   name: 'PaymentProviderManagement'
 })
