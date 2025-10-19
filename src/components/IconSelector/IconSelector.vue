@@ -68,6 +68,8 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue'
+import { Icon as VanIcon } from 'vant'
+import 'vant/es/icon/style'
 
 const props = defineProps({
   modelValue: {

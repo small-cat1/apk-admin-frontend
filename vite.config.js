@@ -25,7 +25,7 @@ export default ({ mode }) => {
 
   // 修复：优化依赖预构建配置
   const optimizeDeps = {
-    include: ['vant/lib/icon/index'],
+    include: [],
     exclude: []
   }
 

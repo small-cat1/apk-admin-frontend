@@ -3,9 +3,7 @@ import 'element-plus/theme-chalk/dark/css-vars.css'
 import 'uno.css';
 import { createApp } from 'vue'
 import ElementPlus from 'element-plus'
-import { Icon } from 'vant'
-// 修改这行：只导入 Icon 组件的样式，而不是全部样式
-import 'vant/es/icon/style'
+
 
 import 'element-plus/dist/index.css'
 import './core/gin-vue-admin'
