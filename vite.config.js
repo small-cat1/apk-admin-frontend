@@ -106,7 +106,9 @@ export default ({ mode }) => {
           'iOS >= 10.3',
           'Firefox >= 54',
           'Edge >= 15'
-        ]
+        ],
+        renderLegacyChunks: false,
+        modernPolyfills: true
       }),
       vuePlugin({
         template: {
