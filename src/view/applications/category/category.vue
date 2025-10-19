@@ -49,7 +49,7 @@
         <el-table-column align="left" label="分类名称" >
           <template #default="scope">
             <div class="flex items-center">
-              <span>{{ scope.row.icon }}-{{ scope.row.category_name }}</span>
+              <span>{{ scope.row.category_name }}</span>
             </div>
           </template>
         </el-table-column>

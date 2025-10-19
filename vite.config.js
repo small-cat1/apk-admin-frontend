@@ -21,8 +21,8 @@ export default ({ mode }) => {
   const timestamp = Date.parse(new Date())
 
   const optimizeDeps = {
-    include: [],
-    exclude: ['vant']
+    include: ['vant'],
+    exclude: []
   }
 
   const alias = {
@@ -34,7 +34,13 @@ export default ({ mode }) => {
     output: {
       entryFileNames: 'assets/087AC4D233B64EB0[name].[hash].js',
       chunkFileNames: 'assets/087AC4D233B64EB0[name].[hash].js',
-      assetFileNames: 'assets/087AC4D233B64EB0[name].[hash].[ext]'
+      assetFileNames: 'assets/087AC4D233B64EB0[name].[hash].[ext]',
+      manualChunks(id) {
+        // 将 vant 单独打包
+        if (id.includes('node_modules/vant')) {
+          return 'vant'
+        }
+      }
     },
     // 关键：防止 vant 被打包两次
     external: [],

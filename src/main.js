@@ -4,7 +4,6 @@ import 'uno.css';
 import { createApp } from 'vue'
 import ElementPlus from 'element-plus'
 
-
 import 'element-plus/dist/index.css'
 import './core/apk-admin'
 import router from '@/router/index'
