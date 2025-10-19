@@ -174,24 +174,11 @@
             <div style="width: 100%">
               <el-input
                   v-model="form.icon"
-                  placeholder="请选择图标"
+                  placeholder="请输入图标"
                   autocomplete="off"
                   readonly
               >
               </el-input>
-              <el-button
-                  type="primary"
-                  size="small"
-                  style="margin-top: 8px; width: 100%"
-                  @click="showIconSelector = true"
-              >
-                选择图标
-              </el-button>
-              <IconSelector
-                  v-model="form.icon"
-                  v-model:visible="showIconSelector"
-                  @change="handleIconChange"
-              />
             </div>
           </el-form-item>
 
@@ -282,15 +269,12 @@ import {
   updateProviderSortOrder,
   batchUpdatePaymentProviderStatus
 } from '@/api/project/payment/provider'
-import IconSelector from '@/components/IconSelector/IconSelector.vue'
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { formatDate } from '@/utils/format'
 defineOptions({
   name: 'PaymentProviderManagement'
 })
-// 图标选择器显示状态
-const showIconSelector = ref(false)
 // 搜索表单
 const searchForm = reactive({
   name: '',
@@ -345,10 +329,7 @@ const viewData = ref(null)
 
 
 
-// 图标变化处理函数
-const handleIconChange = (iconName) => {
-  form.value.icon = iconName
-}
+
 // 工具方法
 const getStatusLabel = (status) => {
   const labels = {

@@ -189,24 +189,11 @@
           <div style="width: 100%">
             <el-input
                 v-model="form.icon"
-                placeholder="请选择图标"
+                placeholder="请输入图标"
                 autocomplete="off"
                 readonly
             >
             </el-input>
-            <el-button
-                type="primary"
-                size="small"
-                style="margin-top: 8px; width: 100%"
-                @click="showIconSelector = true"
-            >
-              选择图标
-            </el-button>
-            <IconSelector
-                v-model="form.icon"
-                v-model:visible="showIconSelector"
-                @change="handleIconChange"
-            />
           </div>
         </el-form-item>
 
@@ -344,7 +331,6 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { formatDate } from '@/utils/format'
 import UploadCommon from '@/components/upload/common.vue'
 import CustomPic from '@/components/customPic/index.vue'
-import IconSelector from '@/components/IconSelector/IconSelector.vue'
 import EmojiSelector from '@/components/EmojiSelector/index.vue'
 import {useUserStore} from "@/pinia/index.js";
 const userStore = useUserStore()
@@ -356,7 +342,6 @@ defineOptions({
 
 
 // 图标选择器显示状态
-const showIconSelector = ref(false)
 
 // 表单数据
 const form = ref({
@@ -559,7 +544,6 @@ const addSubCategory = (row) => {
 // 关闭抽屉
 const closeDrawer = () => {
   drawerFormVisible.value = false
-  showIconSelector.value = false
   form.value = {
     id: null,
     parent_id: 0,
