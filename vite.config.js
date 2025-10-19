@@ -4,7 +4,6 @@ import * as dotenv from 'dotenv'
 import * as fs from 'fs'
 import vuePlugin from '@vitejs/plugin-vue'
 import vueDevTools from 'vite-plugin-vue-devtools'
-import VueFilePathPlugin from './vitePlugin/componentName/index.js'
 import {svgBuilder} from 'vite-auto-import-svg'
 import UnoCSS from '@unocss/vite'
 
@@ -109,7 +108,6 @@ export default ({ mode }) => {
       }),
       svgBuilder(['./src/plugin/', './src/assets/icons/'], base, outDir, 'assets', NODE_ENV),
       [Banner(`\n Build based on gin-vue-admin \n Time : ${timestamp}`)],
-      VueFilePathPlugin('./src/pathInfo.json'),
       UnoCSS()
     ]
   }
