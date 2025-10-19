@@ -36,27 +36,13 @@ export default ({ mode }) => {
 
   const esbuild = {}
 
-  // 修复：优化 Rollup 配置，防止重复打包
+  // 修复：暂时移除 manualChunks，让 Vite 自动处理分包
   const rollupOptions = {
     output: {
       entryFileNames: 'assets/087AC4D233B64EB0[name].[hash].js',
       chunkFileNames: 'assets/087AC4D233B64EB0[name].[hash].js',
-      assetFileNames: 'assets/087AC4D233B64EB0[name].[hash].[ext]',
-      // 手动分包，避免 vant 被重复打包
-      manualChunks: (id) => {
-        if (id.includes('node_modules')) {
-          if (id.includes('vant')) {
-            return 'vant'
-          }
-          if (id.includes('element-plus')) {
-            return 'element-plus'
-          }
-          if (id.includes('vue')) {
-            return 'vue'
-          }
-          return 'vendor'
-        }
-      }
+      assetFileNames: 'assets/087AC4D233B64EB0[name].[hash].[ext]'
+      // 暂时注释掉 manualChunks
     }
   }
 
