@@ -53,7 +53,6 @@
       without-padding
       custom-class="overflow-hidden lg:h-40 col-span-1 md:col-start-2 md:col-span-1 lg:col-start-7"
     >
-      <gva-banner />
     </gva-card>
   </div>
 </template>
@@ -67,7 +66,6 @@
     GvaNotice,
     GvaQuickLink,
     GvaCard,
-    GvaBanner
   } from './components'
   defineOptions({
     name: 'Dashboard'
