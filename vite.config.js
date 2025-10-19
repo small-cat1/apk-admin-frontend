@@ -21,11 +21,13 @@ export default ({ mode }) => {
     }
   }
 
-
-
   const timestamp = Date.parse(new Date())
 
-  const optimizeDeps = {}
+  // 修复：优化依赖预构建配置
+  const optimizeDeps = {
+    include: ['vant/lib/icon/index'],
+    exclude: []
+  }
 
   const alias = {
     '@': path.resolve(__dirname, './src'),
@@ -34,23 +36,42 @@ export default ({ mode }) => {
 
   const esbuild = {}
 
+  // 修复：优化 Rollup 配置，防止重复打包
   const rollupOptions = {
     output: {
       entryFileNames: 'assets/087AC4D233B64EB0[name].[hash].js',
       chunkFileNames: 'assets/087AC4D233B64EB0[name].[hash].js',
-      assetFileNames: 'assets/087AC4D233B64EB0[name].[hash].[ext]'
+      assetFileNames: 'assets/087AC4D233B64EB0[name].[hash].[ext]',
+      // 手动分包，避免 vant 被重复打包
+      manualChunks: (id) => {
+        if (id.includes('node_modules')) {
+          if (id.includes('vant')) {
+            return 'vant'
+          }
+          if (id.includes('element-plus')) {
+            return 'element-plus'
+          }
+          if (id.includes('vue')) {
+            return 'vue'
+          }
+          return 'vendor'
+        }
+      }
     }
   }
+
   const base = "/"
   const root = "./"
   const outDir = "dist"
 
   return {
-    base: base, // 编译后js导入的资源路径
-    root: root, // index.html文件所在位置
-    publicDir: 'public', // 静态资源文件夹
+    base: base,
+    root: root,
+    publicDir: 'public',
     resolve: {
-      alias
+      alias,
+      // 添加这个配置，确保依赖解析正确
+      dedupe: ['vue', 'vant']
     },
     define: {
       'process.env': {}
@@ -58,20 +79,16 @@ export default ({ mode }) => {
     css: {
       preprocessorOptions: {
         scss: {
-          api: 'modern-compiler' // or "modern"
+          api: 'modern-compiler'
         }
       }
     },
     server: {
-      // 如果使用docker-compose开发模式，设置为false
       open: process.env.VITE_OPEN_BROWSER === 'true' || false,
       port: process.env.VITE_CLI_PORT,
       proxy: {
-        // 把key的路径代理到target位置
-        // detail: https://cli.vuejs.org/config/#devserver-proxy
         [process.env.VITE_BASE_API]: {
-          // 需要代理的路径   例如 '/api'
-          target: `${process.env.VITE_BASE_PATH}:${process.env.VITE_SERVER_PORT}/`, // 代理到 目标路径
+          target: `${process.env.VITE_BASE_PATH}:${process.env.VITE_SERVER_PORT}/`,
           changeOrigin: true,
           rewrite: (path) =>
               path.replace(new RegExp('^' + process.env.VITE_BASE_API), '')
@@ -79,21 +96,20 @@ export default ({ mode }) => {
       }
     },
     build: {
-      minify: 'terser', // 是否进行压缩,boolean | 'terser' | 'esbuild',默认使用terser
-      manifest: false, // 是否产出manifest.json
-      sourcemap: false, // 是否产出sourcemap.json
-      outDir: outDir, // 产出目录
-      // terserOptions: {
-      //   compress: {
-      //     //生产环境时移除console
-      //     drop_console: true,
-      //     drop_debugger: true
-      //   }
-      // },
+      minify: 'terser',
+      manifest: false,
+      sourcemap: false,
+      outDir: outDir,
       rollupOptions,
-      // 添加这部分来移除 console
+      // 修复：调整 chunk 大小限制
+      chunkSizeWarningLimit: 1000,
       esbuildOptions: {
         drop: ['console', 'debugger']
+      },
+      // 添加 commonjs 配置
+      commonjsOptions: {
+        include: [/node_modules/],
+        transformMixedEsModules: true
       }
     },
     esbuild,
@@ -104,7 +120,6 @@ export default ({ mode }) => {
       vuePlugin({
         template: {
           compilerOptions: {
-            // 将 emoji-picker 声明为自定义元素
             isCustomElement: (tag) => tag === 'emoji-picker'
           }
         }

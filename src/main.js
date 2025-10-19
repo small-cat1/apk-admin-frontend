@@ -4,12 +4,11 @@ import 'uno.css';
 import { createApp } from 'vue'
 import ElementPlus from 'element-plus'
 import { Icon } from 'vant'
-import 'vant/lib/index.css'
+// 修改这行：只导入 Icon 组件的样式，而不是全部样式
+import 'vant/es/icon/style'
 
 import 'element-plus/dist/index.css'
-// 引入gin-vue-admin前端初始化相关内容
 import './core/gin-vue-admin'
-// 引入封装的router
 import router from '@/router/index'
 import '@/permission'
 import run from '@/core/gin-vue-admin.js'
