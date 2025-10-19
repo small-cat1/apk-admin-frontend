@@ -23,10 +23,10 @@ export default ({ mode }) => {
 
   const timestamp = Date.parse(new Date())
 
-  // 修复：优化依赖预构建配置
+  // 修复：完全移除 vant 相关配置
   const optimizeDeps = {
     include: [],
-    exclude: []
+    exclude: ['vant']  // 排除 vant，避免预构建时重复处理
   }
 
   const alias = {
@@ -34,15 +34,17 @@ export default ({ mode }) => {
     vue$: 'vue/dist/vue.runtime.esm-bundler.js'
   }
 
-  const esbuild = {}
+  const esbuild = {
+    // 跳过 Vant 相关的转译以避免重复声明
+    exclude: []
+  }
 
-  // 修复：暂时移除 manualChunks，让 Vite 自动处理分包
+  // 修复：调整输出配置
   const rollupOptions = {
     output: {
       entryFileNames: 'assets/087AC4D233B64EB0[name].[hash].js',
       chunkFileNames: 'assets/087AC4D233B64EB0[name].[hash].js',
       assetFileNames: 'assets/087AC4D233B64EB0[name].[hash].[ext]'
-      // 暂时注释掉 manualChunks
     }
   }
 
@@ -56,8 +58,7 @@ export default ({ mode }) => {
     publicDir: 'public',
     resolve: {
       alias,
-      // 添加这个配置，确保依赖解析正确
-      dedupe: ['vue', 'vant']
+      dedupe: ['vue']  // 只 dedupe vue，不要 dedupe vant
     },
     define: {
       'process.env': {}
@@ -87,12 +88,10 @@ export default ({ mode }) => {
       sourcemap: false,
       outDir: outDir,
       rollupOptions,
-      // 修复：调整 chunk 大小限制
       chunkSizeWarningLimit: 1000,
       esbuildOptions: {
         drop: ['console', 'debugger']
       },
-      // 添加 commonjs 配置
       commonjsOptions: {
         include: [/node_modules/],
         transformMixedEsModules: true
