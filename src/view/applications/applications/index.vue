@@ -848,6 +848,9 @@ const handleCurrentChange = (val) => {
 const onIconUploadSuccess = (url) => {
   form.value.app_icon = url
   ElMessage.success('图标上传成功')
+  setTimeout(() => {
+    showIconUpload.value = false
+  }, 800)
 }
 
 // ========== CRUD 操作 ==========
