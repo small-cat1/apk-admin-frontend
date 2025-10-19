@@ -5,7 +5,6 @@
   "/src/view/applications/category/category.vue": "CategoryManagement",
   "/src/view/applications/country/country.vue": "CountryManagement",
   "/src/view/applications/index.vue": "ApplicationManager",
-  "/src/view/dashboard/components/banner.vue": "Banner",
   "/src/view/dashboard/components/card.vue": "Card",
   "/src/view/dashboard/components/charts-content-numbers.vue": "ChartsContentNumbers",
   "/src/view/dashboard/components/charts-people-numbers.vue": "ChartsPeopleNumbers",
