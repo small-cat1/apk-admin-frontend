@@ -1,4 +1,3 @@
-import legacyPlugin from '@vitejs/plugin-legacy'
 import Banner from 'vite-plugin-banner'
 import * as path from 'path'
 import * as dotenv from 'dotenv'
@@ -98,18 +97,6 @@ export default ({ mode }) => {
     plugins: [
       process.env.VITE_POSITION === 'open' &&
       vueDevTools({launchEditor: process.env.VITE_EDITOR}),
-      legacyPlugin({
-        targets: [
-          'Android > 39',
-          'Chrome >= 60',
-          'Safari >= 10.1',
-          'iOS >= 10.3',
-          'Firefox >= 54',
-          'Edge >= 15'
-        ],
-        renderLegacyChunks: false,
-        modernPolyfills: true
-      }),
       vuePlugin({
         template: {
           compilerOptions: {
