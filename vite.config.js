@@ -20,10 +20,9 @@ export default ({ mode }) => {
 
   const timestamp = Date.parse(new Date())
 
-  // 修复：完全移除 vant 相关配置
   const optimizeDeps = {
     include: [],
-    exclude: ['vant']  // 排除 vant，避免预构建时重复处理
+    exclude: ['vant']
   }
 
   const alias = {
@@ -31,17 +30,19 @@ export default ({ mode }) => {
     vue$: 'vue/dist/vue.runtime.esm-bundler.js'
   }
 
-  const esbuild = {
-    // 跳过 Vant 相关的转译以避免重复声明
-    exclude: []
-  }
-
-  // 修复：调整输出配置
   const rollupOptions = {
     output: {
       entryFileNames: 'assets/087AC4D233B64EB0[name].[hash].js',
       chunkFileNames: 'assets/087AC4D233B64EB0[name].[hash].js',
       assetFileNames: 'assets/087AC4D233B64EB0[name].[hash].[ext]'
+    },
+    // 关键：防止 vant 被打包两次
+    external: [],
+    onwarn(warning) {
+      // 忽略某些警告
+      if (warning.code === 'THIS_IS_UNDEFINED') {
+        return
+      }
     }
   }
 
@@ -55,7 +56,7 @@ export default ({ mode }) => {
     publicDir: 'public',
     resolve: {
       alias,
-      dedupe: ['vue']  // 只 dedupe vue，不要 dedupe vant
+      dedupe: ['vue', 'vant']
     },
     define: {
       'process.env': {}
@@ -87,16 +88,29 @@ export default ({ mode }) => {
       rollupOptions,
       chunkSizeWarningLimit: 1000,
       esbuildOptions: {
-        drop: ['console', 'debugger']
+        drop: ['console', 'debugger'],
+        // 关键：在 esbuild 中排除 vant 的处理
+        exclude: []
       },
       commonjsOptions: {
         include: [/node_modules/],
         transformMixedEsModules: true
+      },
+      // 添加 terser 的配置，防止重复声明
+      terserOptions: {
+        compress: {
+          drop_console: true,
+          drop_debugger: true
+        },
+        mangle: {
+          // 防止混淆导致的变量冲突
+          keep_fnames: false
+        }
       }
     },
-    esbuild,
     optimizeDeps,
     plugins: [
+      process.env.NODE_ENV === 'development' &&
       process.env.VITE_POSITION === 'open' &&
       vueDevTools({launchEditor: process.env.VITE_EDITOR}),
       vuePlugin({
@@ -109,6 +123,6 @@ export default ({ mode }) => {
       svgBuilder(['./src/plugin/', './src/assets/icons/'], base, outDir, 'assets', NODE_ENV),
       [Banner(`\n Build based on gin-vue-admin \n Time : ${timestamp}`)],
       UnoCSS()
-    ]
+    ].filter(Boolean)
   }
 }

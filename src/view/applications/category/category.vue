@@ -350,6 +350,8 @@ import UploadCommon from '@/components/upload/common.vue'
 import CustomPic from '@/components/customPic/index.vue'
 import IconSelector from '@/components/IconSelector/IconSelector.vue'
 import EmojiSelector from '@/components/EmojiSelector/index.vue'
+import { Icon as VanIcon } from 'vant'
+import 'vant/es/icon/style'
 import {useUserStore} from "@/pinia/index.js";
 const userStore = useUserStore()
 

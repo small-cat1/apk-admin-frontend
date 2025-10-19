@@ -292,7 +292,8 @@ import IconSelector from '@/components/IconSelector/IconSelector.vue'
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { formatDate } from '@/utils/format'
-
+import { Icon as VanIcon } from 'vant'
+import 'vant/es/icon/style'
 defineOptions({
   name: 'PaymentProviderManagement'
 })
