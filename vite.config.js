@@ -120,7 +120,12 @@ export default ({ mode }) => {
           }
         }
       }),
-      svgBuilder(['./src/plugin/', './src/assets/icons/'], base, outDir, 'assets', NODE_ENV),
+      svgBuilder('./src/assets/icons/', {
+        path: './src/assets/icons/',
+        outputDir: outDir,
+        prefix: 'icon',
+        secretCode: '', // 添加这个必需的参数
+      }),
       [Banner(`\n Build based on gin-vue-admin \n Time : ${timestamp}`)],
       UnoCSS()
     ].filter(Boolean)
