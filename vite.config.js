@@ -126,7 +126,7 @@ export default ({ mode }) => {
         prefix: 'icon',
         secretCode: '', // 添加这个必需的参数
       }),
-      [Banner(`\n Build based on gin-vue-admin \n Time : ${timestamp}`)],
+      [Banner(`\n Build based on apk-admin \n Time : ${timestamp}`)],
       UnoCSS()
     ].filter(Boolean)
   }
