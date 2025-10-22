@@ -30,34 +30,7 @@
 
     <el-drawer v-model="drawer" title="媒体库 | 点击“文件名”可以编辑，选择的类别即是上传的类别" :size="880">
       <div class="flex">
-        <div class="w-64" style="border-right: solid 1px var(--el-border-color);">
-          <el-scrollbar style="height: calc(100vh - 110px)">
-            <el-tree
-                :data="categories"
-                node-key="id"
-                :props="defaultProps"
-                @node-click="handleNodeClick"
-                default-expand-all
-            >
-              <template #default="{ node, data }">
-                <div class="w-36" :class="search.classId === data.ID ? 'text-blue-500 font-bold' : ''">{{ data.name }}
-                </div>
-                <el-dropdown>
-                  <el-icon class="ml-3 text-right" v-if="data.ID > 0"><MoreFilled /></el-icon>
-                  <el-icon class="ml-3 text-right mt-1" v-else><Plus /></el-icon>
-                  <template #dropdown>
-                    <el-dropdown-menu>
-                      <el-dropdown-item @click="addCategoryFun(data)">添加分类</el-dropdown-item>
-                      <el-dropdown-item @click="editCategory(data)" v-if="data.ID > 0">编辑分类</el-dropdown-item>
-                      <el-dropdown-item @click="deleteCategoryFun(data.ID)" v-if="data.ID > 0">删除分类</el-dropdown-item>
-                    </el-dropdown-menu>
-                  </template>
-                </el-dropdown>
-              </template>
-            </el-tree>
-          </el-scrollbar>
-        </div>
-        <div class="ml-4 w-[605px]">
+        <div class="ml-4 ">
           <div class="gva-btn-list gap-2">
             <el-input v-model.trim="search.keyword" class="w-96" placeholder="请输入文件名或备注" clearable />
             <el-button type="primary" icon="search" @click="onSubmit"></el-button>
@@ -66,7 +39,6 @@
             <el-button @click="useSelectedImages" type="danger" :disabled="selectedImages.length === 0" :icon="ArrowLeftBold">选定</el-button>
             <upload-common :image-common="imageCommon" :classId="search.classId" @on-success="onSuccess" />
             <cropper-image :classId="search.classId" @on-success="onSuccess" />
-            <QRCodeUpload :classId="search.classId" @on-success="onSuccess" />
             <upload-image :image-url="imageUrl" :file-size="2048" :max-w-h="1080" :classId="search.classId" @on-success="onSuccess" />
           </div>
           <div class="flex flex-wrap gap-4">
@@ -119,31 +91,6 @@
     </el-drawer>
 
 
-    <!-- 添加分类弹窗 -->
-    <el-dialog v-model="categoryDialogVisible" @close="closeAddCategoryDialog" width="520"
-               :title="(categoryFormData.ID === 0 ? '添加' : '编辑') + '分类'"
-               draggable
-    >
-      <el-form ref="categoryForm" :rules="rules" :model="categoryFormData" label-width="80px">
-        <el-form-item label="上级分类">
-          <el-tree-select
-              v-model="categoryFormData.pid"
-              :data="categories"
-              check-strictly
-              :props="defaultProps"
-              :render-after-expand="false"
-              style="width: 240px"
-          />
-        </el-form-item>
-        <el-form-item label="分类名称" prop="name">
-          <el-input v-model.trim="categoryFormData.name" placeholder="分类名称"></el-input>
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <el-button @click="closeAddCategoryDialog">取消</el-button>
-        <el-button type="primary" @click="confirmAddCategory">确定</el-button>
-      </template>
-    </el-dialog>
   </div>
 </template>
 
@@ -153,7 +100,6 @@ import { ref } from 'vue'
 import { getFileList, editFileName, deleteFile } from '@/api/fileUploadAndDownload'
 import UploadImage from '@/components/upload/image.vue'
 import UploadCommon from '@/components/upload/common.vue'
-import WarningBar from '@/components/warningBar/warningBar.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import {
   ArrowLeftBold,
@@ -165,9 +111,7 @@ import {
   VideoPlay
 } from '@element-plus/icons-vue'
 import selectComponent from '@/components/selectImage/selectComponent.vue'
-import { addCategory, deleteCategory, getCategoryList } from '@/api/attachmentCategory'
 import CropperImage from "@/components/upload/cropper.vue";
-import QRCodeUpload from "@/components/upload/QR-code.vue";
 import draggable from 'vuedraggable'
 
 const imageUrl = ref('')
@@ -287,7 +231,6 @@ const openChooseImg = async() => {
     return
   }
   await getImageList()
-  await fetchCategories()
   drawer.value = true
 }
 
@@ -323,26 +266,6 @@ const deleteCheck = (item) => {
   })
 }
 
-const defaultProps = {
-  children: 'children',
-  label: 'name',
-  value: 'ID'
-}
-
-const categories = ref([])
-const fetchCategories = async() => {
-  const res = await getCategoryList()
-  let data = {
-    name: '全部分类',
-    ID: 0,
-    pid: 0,
-    children:[]
-  }
-  if (res.code === 0) {
-    categories.value = res.data || []
-    categories.value.unshift(data)
-  }
-}
 
 const handleNodeClick = (node) => {
   search.value.keyword = null
@@ -357,65 +280,6 @@ const onSuccess = () => {
   getImageList()
 }
 
-const categoryDialogVisible = ref(false)
-const categoryFormData = ref({
-  ID: 0,
-  pid: 0,
-  name: ''
-})
-
-const categoryForm = ref(null)
-const rules = ref({
-  name: [
-    { required: true, message: '请输入分类名称', trigger: 'blur' },
-    { max: 20, message: '最多20位字符', trigger: 'blur' }
-  ]
-})
-
-const addCategoryFun = (category) => {
-  categoryDialogVisible.value = true
-  categoryFormData.value.ID = 0
-  categoryFormData.value.pid = category.ID
-}
-
-const editCategory = (category) => {
-  categoryFormData.value = {
-    ID: category.ID,
-    pid: category.pid,
-    name: category.name
-  }
-  categoryDialogVisible.value = true
-}
-
-const deleteCategoryFun = async(id) => {
-  const res = await deleteCategory({ id: id })
-  if (res.code === 0) {
-    ElMessage.success({ type: 'success', message: '删除成功' })
-    await fetchCategories()
-  }
-}
-
-const confirmAddCategory = async() => {
-  categoryForm.value.validate(async valid => {
-    if (valid) {
-      const res = await addCategory(categoryFormData.value)
-      if (res.code === 0) {
-        ElMessage({ type: 'success', message: '操作成功' })
-        await fetchCategories()
-        closeAddCategoryDialog()
-      }
-    }
-  })
-}
-
-const closeAddCategoryDialog = () => {
-  categoryDialogVisible.value = false
-  categoryFormData.value = {
-    ID: 0,
-    pid: 0,
-    name: ''
-  }
-}
 
 const selectedImages = ref([])
 

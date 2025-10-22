@@ -114,14 +114,12 @@
                 placeholder="请输入微信二维码图片URL"
                 clearable
             >
-            <template #append>
-              <el-button icon="upload" @click="showIconUpload = true">上传</el-button>
-            </template>
+              <template #append>
+                <el-button icon="upload" @click="showIconUpload = true">上传</el-button>
+              </template>
             </el-input>
             <div v-if="serviceConfig.wechat_qrcode" class="mt-2">
-
               <CustomPic pic-type="file" :pic-src="serviceConfig.wechat_qrcode" preview style="width: 150px; height: 150px"/>
-
             </div>
           </el-form-item>
           <el-form-item label="电话客服" prop="phone">
@@ -138,7 +136,7 @@
                 clearable
             />
           </el-form-item>
-          <el-form-item label="是否开三方IM" prop="im_switch">
+          <el-form-item label="是否开启第三方IM" prop="im_switch">
             <el-switch
                 v-model="serviceConfig.im_switch"
                 active-text="开启"
@@ -169,37 +167,113 @@
         </el-form>
       </el-tab-pane>
 
-      <!-- 支付配置 -->
-      <el-tab-pane label="支付配置" name="pay">
-        <el-form ref="payFormRef" :model="payConfig"  label-width="240px" class="mt-3.5">
-          <el-form-item label="支付开关" prop="pay_switch">
-            <el-switch
-                v-model="payConfig.pay_switch"
-                active-text="开启"
-                inactive-text="关闭"
+      <!-- 提现规则配置 -->
+      <el-tab-pane label="用户提现规则" name="commission">
+        <el-form ref="commissionFormRef" :model="commissionConfig" :rules="commissionRules" label-width="240px" class="mt-3.5">
+          <el-form-item label="最低提现金额" prop="minWithdraw">
+            <el-input-number
+                v-model="commissionConfig.minWithdraw"
+                :min="1"
+                :max="10000"
+                :precision="2"
+                :step="10"
+                placeholder="请输入最低提现金额"
+                class="w-full"
             />
+            <div class="text-sm text-gray-500 mt-1">
+              用户可提现的最低金额限制（元）
+            </div>
           </el-form-item>
-          <el-form-item label="微信支付" prop="wechat_pay_enabled">
-            <el-switch
-                v-model="payConfig.wechat_pay_enabled"
-                active-text="启用"
-                inactive-text="禁用"
+
+          <el-form-item label="单次最高提现" prop="maxWithdraw">
+            <el-input-number
+                v-model="commissionConfig.maxWithdraw"
+                :min="100"
+                :max="100000"
+                :precision="2"
+                :step="100"
+                placeholder="请输入单次最高提现金额"
+                class="w-full"
             />
+            <div class="text-sm text-gray-500 mt-1">
+              单次提现的最高金额限制（元）
+            </div>
           </el-form-item>
-          <el-form-item label="支付宝支付" prop="alipay_enabled">
-            <el-switch
-                v-model="payConfig.alipay_enabled"
-                active-text="启用"
-                inactive-text="禁用"
+
+          <el-form-item label="每日提现次数" prop="dailyWithdrawCount">
+            <el-input-number
+                v-model="commissionConfig.dailyWithdrawCount"
+                :min="1"
+                :max="10"
+                :step="1"
+                placeholder="请输入每日提现次数"
+                class="w-full"
             />
+            <div class="text-sm text-gray-500 mt-1">
+              每个用户每天可以提现的次数
+            </div>
           </el-form-item>
-          <el-form-item label="支付回调地址" prop="pay_callback_url">
+
+          <el-form-item label="结算周期" prop="settlementCycle">
             <el-input
-                v-model="payConfig.pay_callback_url"
-                placeholder="请输入支付回调地址"
+                v-model="commissionConfig.settlementCycle"
+                placeholder="例如：订单完成后立即结算"
                 clearable
             />
+            <div class="text-sm text-gray-500 mt-1">
+              佣金结算到账的周期说明
+            </div>
           </el-form-item>
+
+          <el-form-item label="提现手续费" prop="withdrawFee">
+            <el-input-number
+                v-model="commissionConfig.withdrawFee"
+                :min="0"
+                :max="10"
+                :precision="2"
+                :step="0.1"
+                placeholder="请输入提现手续费比例"
+                class="w-full"
+            />
+            <span class="ml-2">%</span>
+            <div class="text-sm text-gray-500 mt-1">
+              提现时收取的手续费比例，0表示不收取手续费
+            </div>
+          </el-form-item>
+
+          <el-form-item label="提现到账时间" prop="withdrawProcessDays">
+            <el-input
+                v-model="commissionConfig.withdrawProcessDays"
+                placeholder="例如：1-3个工作日"
+                clearable
+            />
+            <div class="text-sm text-gray-500 mt-1">
+              提现申请审核通过后到账的时间说明
+            </div>
+          </el-form-item>
+
+          <el-divider content-position="left">规则说明</el-divider>
+
+          <el-descriptions :column="1" border>
+            <el-descriptions-item label="当前最低提现">
+              ¥{{ commissionConfig.minWithdraw }}
+            </el-descriptions-item>
+            <el-descriptions-item label="当前最高提现">
+              ¥{{ commissionConfig.maxWithdraw }}
+            </el-descriptions-item>
+            <el-descriptions-item label="每日提现次数">
+              {{ commissionConfig.dailyWithdrawCount }}次
+            </el-descriptions-item>
+            <el-descriptions-item label="手续费率">
+              {{ commissionConfig.withdrawFee }}%
+            </el-descriptions-item>
+            <el-descriptions-item label="结算周期">
+              {{ commissionConfig.settlementCycle }}
+            </el-descriptions-item>
+            <el-descriptions-item label="到账时间">
+              {{ commissionConfig.withdrawProcessDays }}
+            </el-descriptions-item>
+          </el-descriptions>
         </el-form>
       </el-tab-pane>
 
@@ -259,6 +333,7 @@
         重置
       </el-button>
     </div>
+
     <!-- 图标上传弹窗 -->
     <el-dialog v-model="showIconUpload" title="上传应用图标" width="500px" :show-close="false">
       <div class="upload-section">
@@ -288,6 +363,16 @@
         </el-button>
       </template>
     </el-dialog>
+
+    <!-- 谷歌验证码组件 -->
+    <GoogleVerify
+        v-model="showVerifyDialog"
+        title="安全验证"
+        alert-message="您正在修改提现规则配置，请输入谷歌验证码以确认操作"
+        confirm-text="验证并保存"
+        @confirm="handleVerifyConfirm"
+        @cancel="handleVerifyCancel"
+    />
   </div>
 </template>
 
@@ -298,18 +383,21 @@ import { ElMessage } from 'element-plus'
 import { Check, Refresh } from '@element-plus/icons-vue'
 import UploadCommon from '@/components/upload/common.vue'
 import CustomPic from '@/components/customPic/index.vue'
+import GoogleVerify from '@/components/GoogleVerify/index.vue'
+
 defineOptions({
   name: 'SystemConfig'
 })
 
 const activeScope = ref('website')
 const loading = ref(false)
-// 图标上传控制
 const showIconUpload = ref(false)
+const showVerifyDialog = ref(false)
+
 // 各个scope的form ref
 const websiteFormRef = ref(null)
 const serviceFormRef = ref(null)
-const payFormRef = ref(null)
+const commissionFormRef = ref(null)
 const seoFormRef = ref(null)
 
 // 站点配置
@@ -327,25 +415,27 @@ const websiteConfig = ref({
 
 // 客服配置
 const serviceConfig = ref({
-  enabled:true,
+  enabled: true,
   qq: '',
   wechat: '',
   wechat_qrcode: '',
   phone: '',
   email: '',
-  im_switch:false,
-  im_type:'',
+  im_switch: false,
+  im_type: '',
   im_link: '',
   work_time: '',
-  notice:''
+  notice: ''
 })
 
-// 支付配置
-const payConfig = ref({
-  pay_switch: true,
-  wechat_pay_enabled: false,
-  alipay_enabled: false,
-  pay_callback_url: ''
+// 提现规则配置
+const commissionConfig = ref({
+  minWithdraw: 10,
+  maxWithdraw: 5000,
+  dailyWithdrawCount: 3,
+  settlementCycle: '订单完成后立即结算',
+  withdrawFee: 0,
+  withdrawProcessDays: '1-3个工作日'
 })
 
 // SEO配置
@@ -373,7 +463,43 @@ const serviceRules = {
   ]
 }
 
-
+const commissionRules = {
+  minWithdraw: [
+    { required: true, message: '请输入最低提现金额', trigger: 'blur' },
+    {
+      validator: (rule, value, callback) => {
+        if (value >= commissionConfig.value.maxWithdraw) {
+          callback(new Error('最低提现金额必须小于最高提现金额'))
+        } else {
+          callback()
+        }
+      },
+      trigger: 'blur'
+    }
+  ],
+  maxWithdraw: [
+    { required: true, message: '请输入单次最高提现金额', trigger: 'blur' },
+    {
+      validator: (rule, value, callback) => {
+        if (value <= commissionConfig.value.minWithdraw) {
+          callback(new Error('最高提现金额必须大于最低提现金额'))
+        } else {
+          callback()
+        }
+      },
+      trigger: 'blur'
+    }
+  ],
+  dailyWithdrawCount: [
+    { required: true, message: '请输入每日提现次数', trigger: 'blur' }
+  ],
+  settlementCycle: [
+    { required: true, message: '请输入结算周期', trigger: 'blur' }
+  ],
+  withdrawProcessDays: [
+    { required: true, message: '请输入提现到账时间', trigger: 'blur' }
+  ]
+}
 
 const seoRules = {}
 
@@ -389,7 +515,7 @@ const currentConfig = computed(() => {
   const configMap = {
     website: websiteConfig.value,
     service: serviceConfig.value,
-    pay: payConfig.value,
+    commission: commissionConfig.value,
     seo: seoConfig.value
   }
   return configMap[activeScope.value]
@@ -400,11 +526,16 @@ const currentFormRef = computed(() => {
   const formRefMap = {
     website: websiteFormRef.value,
     service: serviceFormRef.value,
-    pay: payFormRef.value,
+    commission: commissionFormRef.value,
     seo: seoFormRef.value
   }
   return formRefMap[activeScope.value]
 })
+
+// 判断是否为敏感配置（需要谷歌验证码）
+const isSensitiveScope = (scope) => {
+  return scope === 'commission'
+}
 
 // 加载配置
 const loadConfig = async (scope) => {
@@ -415,7 +546,7 @@ const loadConfig = async (scope) => {
       const configMap = {
         website: websiteConfig,
         service: serviceConfig,
-        pay: payConfig,
+        commission: commissionConfig,
         seo: seoConfig
       }
       // 合并配置，保留默认值
@@ -439,25 +570,62 @@ const handleSave = async () => {
 
   await currentFormRef.value.validate(async (valid) => {
     if (valid) {
-      loading.value = true
-      try {
-        const res = await setScopeConfig({
-          scope: activeScope.value,
-          config: currentConfig.value
-        })
-        if (res.code === 0) {
-          ElMessage.success('配置保存成功')
-          await loadConfig(activeScope.value)
-        }
-      } catch (error) {
-        ElMessage.error('配置保存失败')
-      } finally {
-        loading.value = false
+      // 如果是敏感配置（提现规则），需要谷歌验证码
+      if (isSensitiveScope(activeScope.value)) {
+        showVerifyDialog.value = true
+        return
       }
+
+      // 非敏感配置直接保存
+      await saveConfig()
     } else {
       ElMessage.warning('请检查表单填写是否正确')
     }
   })
+}
+
+// 谷歌验证确认回调
+const handleVerifyConfirm = async (code, setLoading) => {
+  await saveConfig(code, setLoading)
+}
+
+// 谷歌验证取消回调
+const handleVerifyCancel = () => {
+  console.log('用户取消了验证')
+}
+
+// 实际保存配置的方法
+const saveConfig = async (googleCode = '', setLoading = null) => {
+  // 如果有 setLoading 函数，使用组件的 loading 状态
+  if (setLoading) {
+    setLoading(true)
+  } else {
+    loading.value = true
+  }
+
+  try {
+    const res = await setScopeConfig({
+      scope: activeScope.value,
+      config: currentConfig.value,
+      googleCode: googleCode || undefined
+    })
+
+    if (res.code === 0) {
+      ElMessage.success('配置保存成功')
+      showVerifyDialog.value = false
+      await loadConfig(activeScope.value)
+    } else {
+      ElMessage.error(res.msg || '配置保存失败')
+    }
+  } catch (error) {
+    ElMessage.error(error.msg || '配置保存失败')
+  } finally {
+    if (setLoading) {
+      setLoading(false)
+    } else {
+      loading.value = false
+    }
+  }
 }
 
 // 重置表单
@@ -480,6 +648,28 @@ loadConfig(activeScope.value)
 
   :deep(.el-tabs__item) {
     font-size: 15px;
+  }
+
+  :deep(.el-input-number) {
+    width: 100%;
+  }
+}
+
+.upload-section {
+  .upload-tip {
+    margin-bottom: 16px;
+  }
+
+  .upload-area {
+    margin-bottom: 16px;
+  }
+
+  .preview-area {
+    h4 {
+      margin-bottom: 12px;
+      font-size: 14px;
+      color: #606266;
+    }
   }
 }
 </style>
